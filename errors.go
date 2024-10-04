@@ -1,6 +1,7 @@
 package errs
 
 import (
+	"strconv"
 	"strings"
 
 	"github.com/PlayerR9/go-verify/errkit"
@@ -10,22 +11,108 @@ import (
 type ErrorCode int
 
 const (
-	// InvalidOperation occurs when an operation (such as a function call) fails
-	// or cannot be performed for a reason or another.
-	InvalidOperation ErrorCode = iota
+	// BadParameter occurs when a parameter is invalid or is not
+	// valid for some reason. For example, a nil pointer when nil
+	// pointers are not allowed.
+	BadParameter ErrorCode = iota
+
+	// InvalidUsage occurs when users call a function without
+	// proper setups or preconditions.
+	InvalidUsage
+
+	// NoSuchKey occurs when a context key is requested but does
+	// not exist.
+	NoSuchKey
+
+	// OperationFail occurs when an operation cannot be completed
+	// due to an internal error.
+	OperationFail
 
 	// UnexpectedValue occurs when a value (or type) was expected but, instead,
 	// another one was encountered.
 	UnexpectedValue
 )
 
-// NewNilReceiver creates a new errors.Err error with the code InvalidOperation and the
-// message "receiver must not be nil".
+// NewErrNilReceiver creates a new error.Err error with the code
+// OperationFail.
+//
+// Parameters:
+//   - frame: The frame of the error.
 //
 // Returns:
-//   - *errors.Err[ErrorCode]: The new error. Never returns nil.
-func NewNilReceiver() *errkit.CodedErr[ErrorCode] {
-	err := errkit.New(InvalidOperation, "receiver must not be nil")
+//   - *error.Err: The new error. Never returns nil.
+func NewErrNilReceiver(frame string) *errkit.CodedErr[ErrorCode] {
+	err := errkit.New(OperationFail, "receiver must not be nil")
+	err.AddSuggestion("Did you forget to initialize the receiver?")
+
+	err.AddFrame(frame)
+
+	return err
+}
+
+// NewErrInvalidParameter creates a new error.Err error.
+//
+// Parameters:
+//   - frame: The frame of the error.
+//   - message: The message of the error.
+//
+// Returns:
+//   - *error.Err: The new error. Never returns nil.
+//
+// This function is mostly useless since it just wraps BadParameter.
+func NewErrInvalidParameter(frame, message string) *errkit.CodedErr[ErrorCode] {
+	err := errkit.New(BadParameter, message)
+	err.AddFrame(frame)
+
+	return err
+}
+
+// NewErrNilParameter creates a new error.Err error.
+//
+// Parameters:
+//   - frame: The frame of the error.
+//   - parameter: the name of the invalid parameter.
+//
+// Returns:
+//   - *error.Err: The new error. Never returns nil.
+func NewErrNilParameter(frame, parameter string) *errkit.CodedErr[ErrorCode] {
+	msg := "parameter (" + strconv.Quote(parameter) + ") must not be nil"
+
+	err := errkit.New(BadParameter, msg)
+	err.AddSuggestion("Maybe you forgot to initialize the parameter?")
+
+	return err
+}
+
+// NewErrInvalidUsage creates a new error.Err error.
+//
+// Parameters:
+//   - frame: The frame of the error.
+//   - message: The message of the error.
+//   - usage: The usage/suggestion to solve the problem.
+//
+// Returns:
+//   - *error.Err: The new error. Never returns nil.
+func NewErrInvalidUsage(frame, message, usage string) *errkit.CodedErr[ErrorCode] {
+	err := errkit.New(InvalidUsage, message)
+
+	err.AddSuggestion(usage)
+
+	err.AddFrame(frame)
+
+	return err
+}
+
+// NewErrNoSuchKey creates a new error.Err error.
+//
+// Parameters:
+//   - frame: The frame of the error.
+//   - key: The key that does not exist.
+//
+// Returns:
+//   - *error.Err: The new error. Never returns nil.
+func NewErrNoSuchKey(frame, key string) *errkit.CodedErr[ErrorCode] {
+	err := errkit.New(NoSuchKey, "key ("+strconv.Quote(key)+") does not exist")
 
 	return err
 }
@@ -59,7 +146,7 @@ func NewUnsupportedValue(kind, expected string) *errkit.CodedErr[ErrorCode] {
 		builder.WriteString("supported")
 	}
 
-	err := errkit.New(InvalidOperation, builder.String())
+	err := errkit.New(OperationFail, builder.String())
 
 	return err
 }
