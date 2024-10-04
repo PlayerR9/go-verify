@@ -1,6 +1,7 @@
 package errkit
 
 import (
+	"fmt"
 	"io"
 	"slices"
 	"strings"
@@ -147,4 +148,112 @@ func Panic(w io.Writer, to_display error) {
 	}
 
 	panic(to_display)
+}
+
+// Merge merges the inner Info into the outer Info.
+//
+// Parameters:
+//   - outer: The outer Info to merge.
+//   - inner: The inner Info to merge.
+//
+// Returns:
+//   - *Info: A pointer to the new Info. Never returns nil.
+//
+// Note:
+//   - The other Info is the inner info of the current Info and, as such,
+//     when conflicts occur, the outer Info takes precedence.
+func Merge(outer, inner *internal.Info) *internal.Info {
+	if inner == nil {
+		return outer.Copy()
+	}
+
+	suggestions := make([]string, 0, len(outer.Suggestions)+len(inner.Suggestions))
+	suggestions = append(suggestions, outer.Suggestions...)
+	suggestions = append(suggestions, inner.Suggestions...)
+
+	context := make(map[string]any)
+
+	for key, value := range inner.Context {
+		context[key] = value
+	}
+
+	for key, value := range outer.Context {
+		context[key] = value
+	}
+
+	stack_trace := make([]string, 0, len(outer.Frames)+len(inner.Frames))
+	stack_trace = append(stack_trace, outer.Frames...)
+	stack_trace = append(stack_trace, inner.Frames...)
+
+	return &internal.Info{
+		Suggestions: suggestions,
+		Timestamp:   outer.Timestamp,
+		Context:     context,
+		Frames:      stack_trace,
+		Inner:       MergeErrors(outer.Inner, inner.Inner),
+	}
+}
+
+func MergeErrors(outer, inner error) error {
+	if outer == nil {
+		return inner
+	} else if inner == nil {
+		return outer
+	}
+
+	o, ok1 := outer.(ErrorCloner)
+	if o == nil {
+		ok1 = false
+	}
+
+	i, ok2 := inner.(ErrorCloner)
+	if i == nil {
+		ok2 = false
+	}
+
+	var err ErrorCloner
+
+	if ok1 {
+		err = o.CloneError()
+		o_info := o.GetInfo()
+
+		if ok2 {
+			i_info := i.GetInfo()
+
+			err.SetInfo(Merge(o_info, i_info))
+		} else {
+
+		}
+	} else {
+		if ok2 {
+			err = i.CloneError()
+			i_info := i.GetInfo()
+
+			err.SetInfo(Merge(o_info, i_info))
+		} else {
+			return fmt.Errorf("%w: %w", outer, inner)
+		}
+	}
+
+	if ok1 {
+
+		info := err.GetInfo()
+
+		if ok1 && !ok2 {
+			info.Inner = MergeErrors(o_info.Inner, i)
+		} else if !ok1 && ok2 {
+			info.Inner = MergeErrors(o, i_info.Inner)
+		}
+	} else {
+
+		err.Info = Merge(o.Info, i.Info)
+
+		if ok1 && !ok2 {
+			err.Info.Inner = MergeErrors(o.Info.Inner, i)
+		} else if !ok1 && ok2 {
+			err.Info.Inner = MergeErrors(o, i.Info.Inner)
+		}
+	}
+
+	return err
 }

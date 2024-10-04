@@ -29,6 +29,26 @@ type CodedErr[C ErrorCoder] struct {
 	*internal.Info
 }
 
+// CloneError implements the ErrorCloner interface.
+func (ce CodedErr[C]) CloneError() ErrorCloner {
+	return &CodedErr[C]{
+		Level: ce.Level,
+		Code:  ce.Code,
+		Msg:   ce.Msg,
+		Info:  ce.Info,
+	}
+}
+
+// GetInfo implements the ErrorCloner interface.
+func (ce CodedErr[C]) GetInfo() *internal.Info {
+	return ce.Info
+}
+
+// SetInfo implements the ErrorCloner interface.
+func (ce CodedErr[C]) SetInfo(info *internal.Info) {
+	ce.Info = info
+}
+
 // Error implements the error interface.
 //
 // Format:
@@ -144,19 +164,6 @@ func (e *CodedErr[C]) ClearInfo() {
 	}
 
 	e.Info = nil
-}
-
-// CloneError clones the error in a shallow way.
-//
-// Returns:
-//   - error: A pointer to a new error. Never returns nil.
-func (ce CodedErr[C]) CloneError() error {
-	return &CodedErr[C]{
-		Level: ce.Level,
-		Code:  ce.Code,
-		Msg:   ce.Msg,
-		Info:  ce.Info,
-	}
 }
 
 // GetMessage gets the message of the error.
