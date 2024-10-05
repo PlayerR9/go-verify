@@ -1,7 +1,6 @@
 package errkit
 
 import (
-	"fmt"
 	"io"
 	"slices"
 	"strings"
@@ -150,6 +149,7 @@ func Panic(w io.Writer, to_display error) {
 	panic(to_display)
 }
 
+/*
 // Merge merges the inner Info into the outer Info.
 //
 // Parameters:
@@ -257,3 +257,4 @@ func MergeErrors(outer, inner error) error {
 
 	return err
 }
+*/

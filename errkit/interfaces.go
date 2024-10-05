@@ -1,7 +1,6 @@
 package errkit
 
-import "github.com/PlayerR9/go-verify/errkit/internal"
-
+/*
 // ErrorCloner is the interface that wraps the CloneError method.
 type ErrorCloner interface {
 	// CloneError clones the error in a shallow way.
@@ -20,7 +19,11 @@ type ErrorCloner interface {
 	//
 	// Parameters:
 	//   - info: The info to set.
-	SetInfo(info *internal.Info)
+	//
+	// Returns:
+	//   - bool: True if the info was set, false otherwise.
+	SetInfo(info *internal.Info) bool
 
 	error
 }
+*/

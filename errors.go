@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/PlayerR9/go-verify/errkit"
+	"github.com/PlayerR9/go-verify/internal"
 )
 
 // ErrorCode is the type of an error code.
@@ -162,14 +163,14 @@ func NewUnexpectedType(kind string, expected, got any) *errkit.CodedErr[ErrorCod
 	var builder strings.Builder
 
 	builder.WriteString("expected ")
-	OrElse(&builder, kind, "something")
+	internal.OrElse(&builder, kind, "something")
 	builder.WriteString("to be ")
 
 	if expected == nil {
 		builder.WriteString("nil")
 	} else {
 		builder.WriteString("of type ")
-		StringOfType(&builder, expected)
+		internal.StringOfType(&builder, expected)
 	}
 
 	builder.WriteString(", got ")
@@ -177,7 +178,7 @@ func NewUnexpectedType(kind string, expected, got any) *errkit.CodedErr[ErrorCod
 	if got == nil {
 		builder.WriteString("no type")
 	} else {
-		StringOfType(&builder, got)
+		internal.StringOfType(&builder, got)
 	}
 
 	builder.WriteString(" instead")
@@ -207,9 +208,9 @@ func NewNotAsExpected(kind, expected, got string) *errkit.CodedErr[ErrorCode] {
 		builder.WriteString(" to be ")
 	}
 
-	OrElse(&builder, expected, "nothing")
+	internal.OrElse(&builder, expected, "nothing")
 	builder.WriteString(", got ")
-	OrElse(&builder, got, "nothing")
+	internal.OrElse(&builder, got, "nothing")
 	builder.WriteString(" instead")
 
 	err := errkit.New(UnexpectedValue, builder.String())

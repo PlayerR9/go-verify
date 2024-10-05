@@ -29,6 +29,7 @@ type CodedErr[C ErrorCoder] struct {
 	*internal.Info
 }
 
+/*
 // CloneError implements the ErrorCloner interface.
 func (ce CodedErr[C]) CloneError() ErrorCloner {
 	return &CodedErr[C]{
@@ -45,9 +46,16 @@ func (ce CodedErr[C]) GetInfo() *internal.Info {
 }
 
 // SetInfo implements the ErrorCloner interface.
-func (ce CodedErr[C]) SetInfo(info *internal.Info) {
+func (ce *CodedErr[C]) SetInfo(info *internal.Info) bool {
+	if ce == nil {
+		return false
+	}
+
 	ce.Info = info
+
+	return true
 }
+*/
 
 // Error implements the error interface.
 //
