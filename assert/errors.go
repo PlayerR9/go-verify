@@ -7,12 +7,6 @@ type ErrAssertFailed struct {
 }
 
 // Error implements the error interface.
-//
-// Format:
-//
-//	"<msg>"
-//
-// where <msg> is the message. If empty, "something went wrong" is used.
 func (e ErrAssertFailed) Error() string {
 	var msg string
 
@@ -31,19 +25,17 @@ func (e ErrAssertFailed) Error() string {
 //   - reason: The message of the error.
 //
 // Returns:
-//   - *ErrAssertFailed: The new error. Never returns nil.
-func NewErrAssertFailed(message string) *ErrAssertFailed {
+//   - error: The new error. Never returns nil.
+//
+// Format:
+//
+//	"<msg>"
+//
+// where <msg> is the message. If empty, "something went wrong" is used.
+func NewErrAssertFailed(message string) error {
 	return &ErrAssertFailed{
 		Message: message,
 	}
-}
-
-// IsNil checks if the error is nil.
-//
-// Returns:
-//   - bool: True if the error is nil, false otherwise.
-func (e *ErrAssertFailed) IsNil() bool {
-	return e == nil
 }
 
 // ErrValidationFailed is an error that is returned when a validation fails.
@@ -56,14 +48,6 @@ type ErrValidationFailed struct {
 }
 
 // Error implements the error interface.
-//
-// Format:
-//
-//	"<name> = <reason>"
-//
-// where:
-//   - <name> is the name of the variable. If empty, "struct" is used.
-//   - <reason> is the message of the error.
 func (e ErrValidationFailed) Error() string {
 	var name string
 
@@ -91,18 +75,69 @@ func (e ErrValidationFailed) Error() string {
 //   - reason: The message of the error.
 //
 // Returns:
-//   - *ErrValidationFailed: The new error. Never returns nil.
-func NewErrValidationFailed(name string, reason error) *ErrValidationFailed {
+//   - error: The new error. Never returns nil.
+//
+// Format:
+//
+//	"<name> = <reason>"
+//
+// where:
+//   - <name> is the name of the variable. If empty, "struct" is used.
+//   - <reason> is the message of the error.
+func NewErrValidationFailed(name string, reason error) error {
 	return &ErrValidationFailed{
 		Name:   name,
 		Reason: reason,
 	}
 }
 
-// IsNil checks if the error is nil.
+// ErrFixFailed is an error that is returned when a fix fails.
+type ErrFixFailed struct {
+	// Name is the name of the variable. If empty, "variable" is used.
+	Name string
+
+	// Reason describes what went wrong.
+	Reason error
+}
+
+// Error implements the error interface.
+func (e ErrFixFailed) Error() string {
+	var name string
+
+	if e.Name == "" {
+		name = "struct"
+	} else {
+		name = e.Name
+	}
+
+	var msg string
+
+	if e.Reason == nil {
+		msg = name + " = nil"
+	} else {
+		msg = name + " = " + e.Reason.Error()
+	}
+
+	return msg
+}
+
+// NewErrFixFailed creates a new ErrFixFailed.
+//
+// Parameters:
+//   - name: The name of the variable.
+//   - reason: The message of the error.
 //
 // Returns:
-//   - bool: True if the error is nil, false otherwise.
-func (e *ErrValidationFailed) IsNil() bool {
-	return e == nil
+//   - error: The new error. Never returns nil.
+//
+// Format:
+//
+//	"<msg>"
+//
+// where <msg> is the message. If empty, "something went wrong" is used.
+func NewErrFixFailed(name string, reason error) error {
+	return &ErrFixFailed{
+		Name:   name,
+		Reason: reason,
+	}
 }

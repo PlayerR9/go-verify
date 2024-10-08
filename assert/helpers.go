@@ -107,13 +107,13 @@ type Fixer interface {
 //	Fix(ms, "ms", false) // Panics: ms = name cannot be empty
 func Fix(v Fixer, name string, allow_nil bool) {
 	if v == nil && !allow_nil {
-		panic(NewErrValidationFailed(name, nil))
+		panic(NewErrFixFailed(name, nil))
 	} else if v == nil {
 		return
 	}
 
 	err := v.Fix()
 	if err != nil {
-		panic(NewErrValidationFailed(name, err))
+		panic(NewErrFixFailed(name, err))
 	}
 }

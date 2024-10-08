@@ -266,18 +266,16 @@ func Deref[T any](v any, name string) T {
 //	}
 //
 //	res := New(NewMyStruct()) // Panics: *MyStruct = nil
-func New[T IsNiler](res T, inner error) T {
-	if inner == nil {
-		if res.IsNil() {
-			msg := fmt.Sprintf("%T = nil", *new(T))
-
-			panic(NewErrAssertFailed(msg))
-		}
-
-		return res
+func New[T IsNiler](res T, err error) T {
+	if err != nil {
+		panic(NewErrAssertFailed("err = " + err.Error()))
 	}
 
-	msg := fmt.Sprintf("%T = %v", res, inner)
+	if res.IsNil() {
+		msg := fmt.Sprintf("%T = nil", *new(T))
 
-	panic(NewErrAssertFailed(msg))
+		panic(NewErrAssertFailed(msg))
+	}
+
+	return res
 }

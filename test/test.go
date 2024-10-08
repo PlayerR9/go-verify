@@ -74,6 +74,14 @@ func CheckPanic(expected string, fn func()) error {
 //		t.Error(err) // Does not error.
 //	}
 func CheckErr(expected string, got error) error {
+	if expected == "" {
+		if got == nil {
+			return nil
+		}
+
+		return fmt.Errorf("want nil, got %q", got)
+	}
+
 	if got == nil {
 		return fmt.Errorf("want %q, got nil", expected)
 	}
