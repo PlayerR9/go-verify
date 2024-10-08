@@ -1,6 +1,20 @@
 package test
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
+
+var (
+	// NoTestInstance is the error returned when no testing instance was
+	// provided. Readers must return this error as is and not wrap it as
+	// callers are expected to check for this error with ==.
+	NoTestInstance error
+)
+
+func init() {
+	NoTestInstance = errors.New("no testing instance was provided")
+}
 
 // ErrPanic is an error that represents a panic.
 type ErrPanic struct {
@@ -9,12 +23,6 @@ type ErrPanic struct {
 }
 
 // Error implements the error interface.
-//
-// Format:
-//
-//	"panic: <value>"
-//
-// where <value> is the value of the panic.
 func (e ErrPanic) Error() string {
 	return fmt.Sprintf("panic: %v", e.Value)
 }
@@ -25,17 +33,15 @@ func (e ErrPanic) Error() string {
 //   - value: The value of the panic.
 //
 // Returns:
-//   - *errors.ErrPanic: The new error. Never returns nil.
-func NewErrPanic(value any) *ErrPanic {
+//   - error: The new error. Never returns nil.
+//
+// Format:
+//
+//	"panic: <value>"
+//
+// where <value> is the value of the panic.
+func NewErrPanic(value any) error {
 	return &ErrPanic{
 		Value: value,
 	}
-}
-
-// IsNil checks if the error is nil.
-//
-// Returns:
-//   - bool: True if the error is nil, false otherwise.
-func (e *ErrPanic) IsNil() bool {
-	return e == nil
 }

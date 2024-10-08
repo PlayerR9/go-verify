@@ -1,14 +1,5 @@
 package assert
 
-// IsNiler is an interface that defines a method that checks if the value is nil.
-type IsNiler interface {
-	// IsNil checks if the value is nil.
-	//
-	// Returns:
-	//   - bool: True if the value is nil, false otherwise.
-	IsNil() bool
-}
-
 // Validater is an interface that defines a method that checks the struct's
 // inner state/integrity.
 type Validater interface {

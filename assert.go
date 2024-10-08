@@ -138,7 +138,9 @@ func False(ok bool, format string, args ...any) {
 //
 //	var ms *MyStruct
 //	NotNil(ms, "ms") // Panics: ms = nil
-func NotNil(v IsNiler, name string) {
+func NotNil(v interface {
+	IsNil() bool
+}, name string) {
 	if v != nil && !v.IsNil() {
 		return
 	}
@@ -266,7 +268,7 @@ func Deref[T any](v any, name string) T {
 //	}
 //
 //	res := New(NewMyStruct()) // Panics: *MyStruct = nil
-func New[T IsNiler](res T, err error) T {
+func New[T interface{ IsNil() bool }](res T, err error) T {
 	if err != nil {
 		panic(NewErrAssertFailed("err = " + err.Error()))
 	}

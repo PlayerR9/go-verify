@@ -91,10 +91,6 @@ func (t *Tests[T]) AddTest(name string, args T) bool {
 // Returns:
 //   - int: The number of tests that passed.
 func (tests Tests[T]) Run(t *testing.T) int {
-	if t == nil {
-		return 0
-	}
-
 	var count int
 
 	for _, test := range tests.tests {

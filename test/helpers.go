@@ -2,6 +2,7 @@ package test
 
 import (
 	"errors"
+	"fmt"
 )
 
 // try executes the given function and stores any paniced error in err.
@@ -83,4 +84,41 @@ func EqualsErr(err1, err2 error) bool {
 	return (err1 != nil && err2 != nil) && (errors.Is(err1, err2) ||
 		errors.Is(err2, err1) ||
 		err1.Error() == err2.Error())
+}
+
+// CheckErr checks that the given error matches the given expected message. If not, an error is returned.
+//
+// Parameters:
+//   - expected: The expected error message.
+//   - got: The error to check.
+//
+// Returns:
+//   - error: an error if the error does not match the expected message, nil otherwise.
+//
+// Example:
+//
+//	err := CheckErr("something went wrong", errors.New("something went wrong"))
+//	if err != nil {
+//		t.Error(err) // Does not error.
+//	}
+func CheckErr(expected string, got error) error {
+	if expected == "" {
+		if got == nil {
+			return nil
+		}
+
+		return fmt.Errorf("want nil, got %q", got)
+	}
+
+	if got == nil {
+		return fmt.Errorf("want %q, got nil", expected)
+	}
+
+	msg := got.Error()
+
+	if msg != expected {
+		return fmt.Errorf("want %q, got %q", expected, msg)
+	}
+
+	return nil
 }

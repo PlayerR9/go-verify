@@ -222,7 +222,7 @@ func TestFalse(t *testing.T) {
 // TestNotNil tests the NotNil function.
 func TestNotNil(t *testing.T) {
 	type args struct {
-		v        IsNiler
+		v        interface{ IsNil() bool }
 		name     string
 		expected string
 	}
