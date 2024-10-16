@@ -16,7 +16,7 @@ func (e ErrAssertFailed) Error() string {
 		msg = e.Message
 	}
 
-	return msg
+	return "(Assertion Failed): " + msg
 }
 
 // NewErrAssertFailed creates a new ErrAssertFailed.
