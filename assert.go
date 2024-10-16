@@ -281,3 +281,33 @@ func New[T interface{ IsNil() bool }](res T, err error) T {
 
 	return res
 }
+
+// Conv asserts whether the variable is of type T. If not, it panics with an
+// ErrAssertFailed error. Unlike with Type(), this returns the converted
+// type as well.
+//
+// Parameters:
+//   - v: The variable to assert.
+//   - name: The name of the variable. If empty, the name "variable" is used.
+//
+// Example:
+//
+//	v := "foo"
+//	res := Conv[int](v, "v") // Panics: v = string, want int
+func Conv[T any](v any, name string) T {
+	if name == "" {
+		name = "variable"
+	}
+
+	if v == nil {
+		panic(NewErrAssertFailed(name + " = nil"))
+	}
+
+	val, ok := v.(T)
+	if !ok {
+		msg := fmt.Sprintf("%s = %T, want %T", name, v, *new(T))
+		panic(NewErrAssertFailed(msg))
+	}
+
+	return val
+}
