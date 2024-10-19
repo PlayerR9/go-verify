@@ -68,6 +68,30 @@ func Err(inner error, format string, args ...any) {
 	panic(NewErrAssertFailed(msg))
 }
 
+// Must asserts whether the function does not return an error for the given argument.
+// If the function returns an error, it panics with an ErrAssertFailed error.
+//
+// Parameters:
+//   - arg: The argument to pass to the function.
+//   - fn: The function to execute.
+//   - format: The format of the function call that returned the error.
+//   - args: The arguments of the function call.
+func Must[T any](arg T, fn func(arg T) error, format string, args ...any) {
+	if fn == nil {
+		return
+	}
+
+	err := fn(arg)
+	if err == nil {
+		return
+	}
+
+	msg := fmt.Sprintf(format, args...)
+	msg += " = " + err.Error()
+
+	panic(NewErrAssertFailed(msg))
+}
+
 // True is just syntactic sugar for the Condf function but used for when functions
 // return a boolean result to indicate success instead of an error.
 //
