@@ -83,7 +83,7 @@ func (t *Tests[T]) AddTest(name string, args T) bool {
 }
 
 // Run runs all the tests in the collection. They are run in the same order as
-// they were added.
+// they were added. However, they are run in parallel.
 //
 // Parameters:
 //   - t: The testing object. If nil, no tests will be run.
