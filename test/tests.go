@@ -1,40 +1,18 @@
 package test
 
-import "testing"
+import (
+	"testing"
 
-// TestingFunc is the type of the testing function.
-type TestingFunc func(t *testing.T)
-
-var (
-	// UnimplementedTest is the error returned when a test is not implemented.
-	UnimplementedTest TestingFunc
+	"github.com/PlayerR9/go-verify/common"
 )
-
-func init() {
-	UnimplementedTest = func(t *testing.T) {
-		t.Error("test not implemented")
-	}
-}
-
-// Instance is a test instance.
-type Instance[T any] struct {
-	// name is the name of the test.
-	name string
-
-	// args are the arguments passed to the test function.
-	args T
-
-	// fn is the test function.
-	fn TestingFunc
-}
 
 // Tests is a collection of test instances.
 type Tests[T any] struct {
 	// tests is the collection of test instances.
-	tests []*Instance[T]
+	tests []Instance[T]
 
 	// make_test is the function that creates the test function.
-	make_test func(args T) TestingFunc
+	make_test MakeTestFn[T]
 }
 
 // NewTests creates a new test collection.
@@ -45,7 +23,7 @@ type Tests[T any] struct {
 //
 // Returns:
 //   - Tests[T]: The new test collection.
-func NewTests[T any](make_test func(args T) TestingFunc) Tests[T] {
+func NewTests[T any](make_test MakeTestFn[T]) Tests[T] {
 	if make_test == nil {
 		make_test = func(args T) TestingFunc {
 			return UnimplementedTest
@@ -53,7 +31,7 @@ func NewTests[T any](make_test func(args T) TestingFunc) Tests[T] {
 	}
 
 	return Tests[T]{
-		tests:     make([]*Instance[T], 0),
+		tests:     make([]Instance[T], 0),
 		make_test: make_test,
 	}
 }
@@ -65,13 +43,13 @@ func NewTests[T any](make_test func(args T) TestingFunc) Tests[T] {
 //   - args: The arguments passed to the test function.
 //
 // Returns:
-//   - bool: True if the receiver is not nil, false otherwise.
-func (t *Tests[T]) AddTest(name string, args T) bool {
+//   - error: An error of type common.ErrNilReceiver if the receiver is nil.
+func (t *Tests[T]) AddTest(name string, args T) error {
 	if t == nil {
-		return false
+		return common.ErrNilReceiver
 	}
 
-	test := &Instance[T]{
+	test := Instance[T]{
 		name: name,
 		args: args,
 		fn:   t.make_test(args),
@@ -79,7 +57,7 @@ func (t *Tests[T]) AddTest(name string, args T) bool {
 
 	t.tests = append(t.tests, test)
 
-	return true
+	return nil
 }
 
 // Run runs all the tests in the collection. They are run in the same order as
@@ -91,6 +69,12 @@ func (t *Tests[T]) AddTest(name string, args T) bool {
 // Returns:
 //   - int: The number of tests that passed.
 func (tests Tests[T]) Run(t *testing.T) int {
+	if len(tests.tests) == 0 {
+		return 0
+	} else if t == nil {
+		panic(NoTestInstance)
+	}
+
 	var count int
 
 	for _, test := range tests.tests {

@@ -2,6 +2,8 @@ package test
 
 import (
 	"testing"
+
+	"github.com/PlayerR9/go-verify/common"
 )
 
 func TestNewTests(t *testing.T) {
@@ -20,8 +22,10 @@ func TestNewTests(t *testing.T) {
 
 	var other_tests *Tests[mock_args]
 
-	ok := other_tests.AddTest("test", mock_args{})
-	if ok {
-		t.Errorf("want false, got true")
+	err := other_tests.AddTest("test", mock_args{})
+	if err == nil {
+		t.Errorf("want error, got nil")
+	} else if err != common.ErrNilReceiver {
+		t.Errorf("want ErrNilReceiver, got %v", err)
 	}
 }

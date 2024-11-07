@@ -3,12 +3,14 @@ package test
 import (
 	"errors"
 	"fmt"
+	"strconv"
 )
 
 var (
-	// NoTestInstance is the error returned when no testing instance was
-	// provided. Readers must return this error as is and not wrap it as
-	// callers are expected to check for this error with ==.
+	// NoTestInstance occurs when a nil testing instance was provided.
+	//
+	// Format:
+	//   "no testing instance was provided"
 	NoTestInstance error
 )
 
@@ -44,4 +46,33 @@ func NewErrPanic(value any) error {
 	return &ErrPanic{
 		Value: value,
 	}
+}
+
+type ErrTestFailed struct {
+	Want string
+	Got  error
+}
+
+func (e ErrTestFailed) Error() string {
+	var got string
+
+	if e.Got == nil {
+		got = "no error"
+	} else {
+		got = e.Got.Error()
+	}
+
+	var msg string
+
+	if e.Want == "" {
+		msg = "want no error, got "
+	} else {
+		msg = "want " + strconv.Quote(e.Want) + ", got "
+	}
+
+	return msg + strconv.Quote(got)
+}
+
+func NewErrTestFailed() error {
+	return &ErrTestFailed{}
 }
