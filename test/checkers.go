@@ -2,8 +2,6 @@ package test
 
 import (
 	"errors"
-	"fmt"
-	"strconv"
 )
 
 // try executes the given function and captures any panic that occurs,
@@ -86,45 +84,4 @@ func EqualsErr(err1, err2 error) bool {
 	}
 
 	return err1.Error() == err2.Error()
-}
-
-// CheckErr checks that the given error matches the given expected message. If not, an error is returned.
-//
-// Parameters:
-//   - expected: The expected error message.
-//   - got: The error to check.
-//
-// Returns:
-//   - error: an error if the error does not match the expected message, nil otherwise.
-//
-// Example:
-//
-//	err := CheckErr("something went wrong", errors.New("something went wrong"))
-//	if err != nil {
-//		t.Error(err) // Does not error.
-//	}
-func CheckErr(expected string, got error) error {
-	var got_str string
-
-	if got != nil {
-		got_str = got.Error()
-	}
-
-	if expected == "" {
-		if got == nil {
-			return nil
-		}
-
-		return fmt.Errorf("want no error, got %s", strconv.Quote(got_str))
-	}
-
-	if got == nil {
-		return fmt.Errorf("want %s, got no error", strconv.Quote(expected))
-	}
-
-	if got_str != expected {
-		return fmt.Errorf("want %s, got %s", strconv.Quote(expected), strconv.Quote(got_str))
-	}
-
-	return nil
 }

@@ -40,17 +40,17 @@ type Validater interface {
 //		Name: "",
 //	}
 //
-//	Validate(ms, "ms", false) // Panics: ms = name cannot be empty
+//	Validate(ms, "ms", false) // Panics: (Validate Failed) ms = name cannot be empty
 func Validate(v Validater, name string, allow_nil bool) {
 	if v == nil && !allow_nil {
-		panic(NewErrValidationFailed(name, nil))
+		panic(NewErrValidateFailed(name, nil))
 	} else if v == nil {
 		return
 	}
 
 	err := v.Validate()
 	if err != nil {
-		panic(NewErrValidationFailed(name, err))
+		panic(NewErrValidateFailed(name, err))
 	}
 }
 
@@ -95,7 +95,7 @@ type Fixer interface {
 //		Name: "",
 //	}
 //
-//	Fix(ms, "ms", false) // Panics: ms = name cannot be empty
+//	Fix(ms, "ms", false) // Panics: (Fix Failed) ms = name cannot be empty
 func Fix(v Fixer, name string, allow_nil bool) {
 	if v == nil && !allow_nil {
 		panic(NewErrFixFailed(name, nil))

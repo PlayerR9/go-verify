@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/PlayerR9/go-verify/common"
 	test "github.com/PlayerR9/go-verify/test"
 )
 
@@ -28,6 +29,7 @@ func (mt *MockType) IsNil() bool {
 	return mt == nil
 }
 
+// TestCond tests the Cond function.
 func TestCond(t *testing.T) {
 	type args struct {
 		cond     bool
@@ -41,10 +43,7 @@ func TestCond(t *testing.T) {
 				Cond(args.cond, args.msg)
 			})
 
-			err = test.CheckErr(args.expected, err)
-			if err != nil {
-				t.Error(err)
-			}
+			_ = common.FAIL.CheckErr(t, args.expected, err)
 		}
 	})
 
@@ -57,7 +56,7 @@ func TestCond(t *testing.T) {
 	_ = tests.AddTest("cond is false", args{
 		cond:     false,
 		msg:      "foo",
-		expected: "foo",
+		expected: NewErrAssertFailed("foo").Error(),
 	})
 
 	_ = tests.Run(t)
@@ -78,10 +77,7 @@ func TestCondf(t *testing.T) {
 				Condf(args.cond, args.format, args.args...)
 			})
 
-			err = test.CheckErr(args.expected, err)
-			if err != nil {
-				t.Error(err)
-			}
+			_ = common.FAIL.CheckErr(t, args.expected, err)
 		}
 	})
 
@@ -96,7 +92,7 @@ func TestCondf(t *testing.T) {
 		cond:     false,
 		format:   "%q must be %q",
 		args:     []any{"foo", "bar"},
-		expected: fmt.Sprintf("%q must be %q", "foo", "bar"),
+		expected: NewErrAssertFailed(fmt.Sprintf("%q must be %q", "foo", "bar")).Error(),
 	})
 
 	_ = tests.Run(t)
@@ -117,10 +113,7 @@ func TestErr(t *testing.T) {
 				Err(args.inner, args.format, args.args...)
 			})
 
-			err = test.CheckErr(args.expected, err)
-			if err != nil {
-				t.Error(err)
-			}
+			_ = common.FAIL.CheckErr(t, args.expected, err)
 		}
 	})
 
@@ -135,7 +128,7 @@ func TestErr(t *testing.T) {
 		inner:    errors.New("something went wrong"),
 		format:   "MyFunc(%q, %q)",
 		args:     []any{"foo", "bar"},
-		expected: fmt.Sprintf("MyFunc(%q, %q) = %s", "foo", "bar", "something went wrong"),
+		expected: NewErrAssertFailed(fmt.Sprintf("MyFunc(%q, %q) = %s", "foo", "bar", "something went wrong")).Error(),
 	})
 
 	_ = tests.Run(t)
@@ -156,10 +149,7 @@ func TestTrue(t *testing.T) {
 				True(args.ok, args.format, args.args...)
 			})
 
-			err = test.CheckErr(args.expected, err)
-			if err != nil {
-				t.Error(err)
-			}
+			_ = common.FAIL.CheckErr(t, args.expected, err)
 		}
 	})
 
@@ -174,7 +164,7 @@ func TestTrue(t *testing.T) {
 		ok:       false,
 		format:   "MyFunc(%q, %q)",
 		args:     []any{"foo", "bar"},
-		expected: fmt.Sprintf("MyFunc(%q, %q) = false", "foo", "bar"),
+		expected: NewErrAssertFailed(fmt.Sprintf("MyFunc(%q, %q) = false", "foo", "bar")).Error(),
 	})
 
 	_ = tests.Run(t)
@@ -195,10 +185,7 @@ func TestFalse(t *testing.T) {
 				False(args.ok, args.format, args.args...)
 			})
 
-			err = test.CheckErr(args.expected, err)
-			if err != nil {
-				t.Error(err)
-			}
+			_ = common.FAIL.CheckErr(t, args.expected, err)
 		}
 	})
 
@@ -213,7 +200,7 @@ func TestFalse(t *testing.T) {
 		ok:       true,
 		format:   "MyFunc(%q, %q)",
 		args:     []any{"foo", "bar"},
-		expected: fmt.Sprintf("MyFunc(%q, %q) = true", "foo", "bar"),
+		expected: NewErrAssertFailed(fmt.Sprintf("MyFunc(%q, %q) = true", "foo", "bar")).Error(),
 	})
 
 	_ = tests.Run(t)
@@ -233,10 +220,7 @@ func TestNotNil(t *testing.T) {
 				NotNil(args.v, args.name)
 			})
 
-			err = test.CheckErr(args.expected, err)
-			if err != nil {
-				t.Error(err)
-			}
+			_ = common.FAIL.CheckErr(t, args.expected, err)
 		}
 	})
 
@@ -249,13 +233,13 @@ func TestNotNil(t *testing.T) {
 	_ = tests.AddTest("v is nil", args{
 		v:        nil,
 		name:     "v",
-		expected: "v = nil",
+		expected: NewErrAssertFailed("v = nil").Error(),
 	})
 
 	_ = tests.AddTest("v without name", args{
 		v:        nil,
 		name:     "",
-		expected: "variable = nil",
+		expected: NewErrAssertFailed("variable = nil").Error(),
 	})
 
 	_ = tests.Run(t)
@@ -275,10 +259,7 @@ func TestNotZero(t *testing.T) {
 				NotZero(args.v, args.name)
 			})
 
-			err = test.CheckErr(args.expected, err)
-			if err != nil {
-				t.Error(err)
-			}
+			_ = common.FAIL.CheckErr(t, args.expected, err)
 		}
 	})
 
@@ -291,13 +272,13 @@ func TestNotZero(t *testing.T) {
 	_ = tests.AddTest("v is zero", args{
 		v:        0,
 		name:     "v",
-		expected: "v = 0",
+		expected: NewErrAssertFailed("v = 0").Error(),
 	})
 
 	_ = tests.AddTest("v without name", args{
 		v:        0,
 		name:     "",
-		expected: "variable = 0",
+		expected: NewErrAssertFailed("variable = 0").Error(),
 	})
 
 	_ = tests.Run(t)
@@ -318,10 +299,7 @@ func TestType(t *testing.T) {
 				Type[int](args.v, args.name, args.allow_nil)
 			})
 
-			err = test.CheckErr(args.expected, err)
-			if err != nil {
-				t.Error(err)
-			}
+			_ = common.FAIL.CheckErr(t, args.expected, err)
 		}
 	})
 
@@ -336,7 +314,7 @@ func TestType(t *testing.T) {
 		v:         "foo",
 		name:      "v",
 		allow_nil: false,
-		expected:  "v = string, want int",
+		expected:  NewErrAssertFailed("v = string, want int").Error(),
 	})
 
 	_ = tests.AddTest("v is nil", args{
@@ -350,7 +328,7 @@ func TestType(t *testing.T) {
 		v:         nil,
 		name:      "",
 		allow_nil: false,
-		expected:  "variable = nil",
+		expected:  NewErrAssertFailed("variable = nil").Error(),
 	})
 
 	_ = tests.Run(t)
@@ -370,10 +348,7 @@ func TestDeref(t *testing.T) {
 				_ = Deref[int](args.v, args.name)
 			})
 
-			err = test.CheckErr(args.expected, err)
-			if err != nil {
-				t.Error(err)
-			}
+			_ = common.FAIL.CheckErr(t, args.expected, err)
 		}
 	})
 
@@ -386,13 +361,13 @@ func TestDeref(t *testing.T) {
 	_ = tests.AddTest("v is string", args{
 		v:        "foo",
 		name:     "v",
-		expected: "v = string, want int",
+		expected: NewErrAssertFailed("v = string, want int").Error(),
 	})
 
 	_ = tests.AddTest("v without name", args{
 		v:        nil,
 		name:     "",
-		expected: "variable = nil, want int",
+		expected: NewErrAssertFailed("variable = nil, want int").Error(),
 	})
 
 	x := 1
@@ -420,17 +395,14 @@ func TestNew(t *testing.T) {
 				New(args.res, args.inner)
 			})
 
-			err = test.CheckErr(args.expected, err)
-			if err != nil {
-				t.Error(err)
-			}
+			_ = common.FAIL.CheckErr(t, args.expected, err)
 		}
 	})
 
 	_ = tests.AddTest("res is nil", args{
 		res:      nil,
 		inner:    nil,
-		expected: "*assert.MockType = nil",
+		expected: NewErrAssertFailed("*assert.MockType = nil").Error(),
 	})
 
 	_ = tests.AddTest("res is not nil", args{
@@ -442,7 +414,7 @@ func TestNew(t *testing.T) {
 	_ = tests.AddTest("inner is not nil", args{
 		res:      nil,
 		inner:    errors.New("foo"),
-		expected: "err = foo",
+		expected: NewErrAssertFailed("err = foo").Error(),
 	})
 
 	_ = tests.Run(t)

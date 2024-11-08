@@ -78,7 +78,7 @@ func Err(inner error, format string, args ...any) {
 //   - args: The arguments of the function call.
 func Must[T any](arg T, fn func(arg T) error, format string, args ...any) {
 	if fn == nil {
-		return
+		panic(NewErrAssertFailed("no function provided"))
 	}
 
 	err := fn(arg)
@@ -255,7 +255,6 @@ func Deref[T any](v any, name string) T {
 
 	if v == nil {
 		msg := fmt.Sprintf("%s = nil, want %T", name, *new(T))
-
 		panic(NewErrAssertFailed(msg))
 	}
 
@@ -266,7 +265,6 @@ func Deref[T any](v any, name string) T {
 		return v
 	default:
 		msg := fmt.Sprintf("%s = %T, want %T", name, v, *new(T))
-
 		panic(NewErrAssertFailed(msg))
 	}
 }
@@ -299,7 +297,6 @@ func New[T interface{ IsNil() bool }](res T, err error) T {
 
 	if res.IsNil() {
 		msg := fmt.Sprintf("%T = nil", *new(T))
-
 		panic(NewErrAssertFailed(msg))
 	}
 

@@ -4,13 +4,17 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/PlayerR9/go-verify/common"
 	"github.com/PlayerR9/go-verify/test"
 )
 
+// MockStruct is a mock struct.
 type MockStruct struct {
+	// name is the name of the mock struct.
 	name string
 }
 
+// Validate implements Validater.
 func (ms MockStruct) Validate() error {
 	if ms.name == "" {
 		return errors.New("name cannot be empty")
@@ -19,6 +23,7 @@ func (ms MockStruct) Validate() error {
 	return nil
 }
 
+// Fix implements Fixer.
 func (ms *MockStruct) Fix() error {
 	if ms == nil {
 		return nil
@@ -48,10 +53,7 @@ func TestValidate(t *testing.T) {
 				Validate(args.v, args.name, args.allow_nil)
 			})
 
-			err = test.CheckErr(args.expected, err)
-			if err != nil {
-				t.Error(err)
-			}
+			_ = common.FAIL.CheckErr(t, args.expected, err)
 		}
 	})
 
@@ -68,7 +70,7 @@ func TestValidate(t *testing.T) {
 		v:         nil,
 		name:      "",
 		allow_nil: false,
-		expected:  "struct = nil",
+		expected:  "(Validate Failed) struct = nil",
 	})
 
 	_ = tests.AddTest("nil with allow_nil", args{
@@ -84,7 +86,7 @@ func TestValidate(t *testing.T) {
 		},
 		name:      "ms",
 		allow_nil: false,
-		expected:  "ms = name cannot be empty",
+		expected:  "(Validate Failed) ms = name cannot be empty",
 	})
 
 	_ = tests.Run(t)
@@ -105,10 +107,7 @@ func TestFix(t *testing.T) {
 				Fix(args.v, args.name, args.allow_nil)
 			})
 
-			err = test.CheckErr(args.expected, err)
-			if err != nil {
-				t.Error(err)
-			}
+			_ = common.FAIL.CheckErr(t, args.expected, err)
 		}
 	})
 
@@ -125,7 +124,7 @@ func TestFix(t *testing.T) {
 		v:         nil,
 		name:      "",
 		allow_nil: false,
-		expected:  "struct = nil",
+		expected:  "(Fix Failed) struct = nil",
 	})
 
 	_ = tests.AddTest("nil with allow_nil", args{
@@ -141,7 +140,7 @@ func TestFix(t *testing.T) {
 		},
 		name:      "ms",
 		allow_nil: false,
-		expected:  "ms = name cannot be empty",
+		expected:  "(Fix Failed) ms = name cannot be empty",
 	})
 
 	_ = tests.Run(t)

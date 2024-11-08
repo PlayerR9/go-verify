@@ -39,9 +39,12 @@ func TestUintPow(t *testing.T) {
 		fn := func(t *testing.T) {
 			res, err := UintPow(tt.args.base, tt.args.exp)
 			if err != nil {
-				t.Errorf("want no error, got %v", err)
-			} else if res != tt.want {
-				t.Errorf("want %d, got %d", tt.want, res)
+				FAIL.WrongError(t, "", err)
+				return
+			}
+
+			if res != tt.want {
+				FAIL.WrongInt(t, int(tt.want), int(res))
 			}
 		}
 
@@ -83,9 +86,12 @@ func TestUintPowSlice(t *testing.T) {
 		fn := func(t *testing.T) {
 			got, err := UintPowSlice(tt.args.base, tt.args.max_exp)
 			if err != nil {
-				t.Errorf("want no error, got %v", err)
-			} else if !slices.Equal(got, tt.want) {
-				t.Errorf("want %v, got %v", tt.want, got)
+				FAIL.WrongError(t, "", err)
+				return
+			}
+
+			if !slices.Equal(got, tt.want) {
+				FAIL.WrongAny(t, tt.want, got)
 			}
 		}
 

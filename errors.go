@@ -1,45 +1,47 @@
 package assert
 
+import "fmt"
+
 // ErrAssertFailed is an error that is returned when an assertion fails.
 type ErrAssertFailed struct {
-	// Message describes what went wrong.
-	Message string
+	// Msg describes what went wrong.
+	Msg string
 }
 
 // Error implements the error interface.
 func (e ErrAssertFailed) Error() string {
 	var msg string
 
-	if e.Message == "" {
+	if e.Msg == "" {
 		msg = "something went wrong"
 	} else {
-		msg = e.Message
+		msg = e.Msg
 	}
 
-	return "(Assertion Failed): " + msg
+	return "(Assertion Failed) " + msg
 }
 
 // NewErrAssertFailed creates a new ErrAssertFailed.
 //
 // Parameters:
-//   - reason: The message of the error.
+//   - msg: The message of the error.
 //
 // Returns:
 //   - error: The new error. Never returns nil.
 //
 // Format:
 //
-//	"<msg>"
+//	(Assertion Failed) "<msg>"
 //
 // where <msg> is the message. If empty, "something went wrong" is used.
-func NewErrAssertFailed(message string) error {
+func NewErrAssertFailed(msg string) error {
 	return &ErrAssertFailed{
-		Message: message,
+		Msg: msg,
 	}
 }
 
-// ErrValidationFailed is an error that is returned when a validation fails.
-type ErrValidationFailed struct {
+// ErrValidateFailed is an error that is returned when a validation fails.
+type ErrValidateFailed struct {
 	// Name is the name of the variable. If empty, "variable" is used.
 	Name string
 
@@ -48,7 +50,7 @@ type ErrValidationFailed struct {
 }
 
 // Error implements the error interface.
-func (e ErrValidationFailed) Error() string {
+func (e ErrValidateFailed) Error() string {
 	var name string
 
 	if e.Name == "" {
@@ -65,10 +67,10 @@ func (e ErrValidationFailed) Error() string {
 		msg = name + " = " + e.Reason.Error()
 	}
 
-	return msg
+	return "(Validate Failed) " + msg
 }
 
-// NewErrValidationFailed creates a new ErrValidationFailed.
+// NewErrValidateFailed creates a new ErrValidateFailed.
 //
 // Parameters:
 //   - name: The name of the variable.
@@ -79,13 +81,13 @@ func (e ErrValidationFailed) Error() string {
 //
 // Format:
 //
-//	"<name> = <reason>"
+//	(Validate Failed) "<name> = <reason>"
 //
 // where:
 //   - <name> is the name of the variable. If empty, "struct" is used.
 //   - <reason> is the message of the error.
-func NewErrValidationFailed(name string, reason error) error {
-	return &ErrValidationFailed{
+func NewErrValidateFailed(name string, reason error) error {
+	return &ErrValidateFailed{
 		Name:   name,
 		Reason: reason,
 	}
@@ -118,7 +120,7 @@ func (e ErrFixFailed) Error() string {
 		msg = name + " = " + e.Reason.Error()
 	}
 
-	return msg
+	return "(Fix Failed) " + msg
 }
 
 // NewErrFixFailed creates a new ErrFixFailed.
@@ -132,12 +134,42 @@ func (e ErrFixFailed) Error() string {
 //
 // Format:
 //
-//	"<msg>"
+//	(Fix Failed) "<msg>"
 //
 // where <msg> is the message. If empty, "something went wrong" is used.
 func NewErrFixFailed(name string, reason error) error {
 	return &ErrFixFailed{
 		Name:   name,
 		Reason: reason,
+	}
+}
+
+// ErrPanic is an error that represents a panic.
+type ErrPanic struct {
+	// Value is the value of the panic.
+	Value any
+}
+
+// Error implements the error interface.
+func (e ErrPanic) Error() string {
+	return fmt.Sprintf("panic: %v", e.Value)
+}
+
+// NewErrPanic creates a new error that represents a panic.
+//
+// Parameters:
+//   - value: The value of the panic.
+//
+// Returns:
+//   - error: The new error. Never returns nil.
+//
+// Format:
+//
+//	"panic: <value>"
+//
+// where <value> is the value of the panic.
+func NewErrPanic(value any) error {
+	return &ErrPanic{
+		Value: value,
 	}
 }

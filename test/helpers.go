@@ -5,7 +5,7 @@ import "testing"
 // TestingFunc is the type of the testing function.
 //
 // Parameters:
-//   - t: The testing instance.
+//   - t: The testing instance. Assumed to be non-nil.
 type TestingFunc func(t *testing.T)
 
 var (

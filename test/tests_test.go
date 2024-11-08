@@ -6,26 +6,43 @@ import (
 	"github.com/PlayerR9/go-verify/common"
 )
 
-func TestNewTests(t *testing.T) {
-	type mock_args struct {
-	}
+// TestNewTestsSuccess tests the NewTests function when it succeeds.
+func TestNewTestsSuccess(t *testing.T) {
+	const (
+		Want uint = 0
+	)
+
+	type mock_args struct{}
 
 	tests := NewTests[mock_args](nil)
 
-	if tests.make_test(mock_args{}) == nil {
-		t.Errorf("want UnimplementedTest, got nil")
+	fn := tests.make_test(mock_args{})
+	if fn == nil {
+		err := common.NewErrTestFailed("non-nil", "nil")
+		t.Error(err)
+
+		return
 	}
 
-	if len(tests.tests) != 0 {
-		t.Errorf("want 0, got %d", len(tests.tests))
+	test_count := tests.GetTestsCount()
+	if test_count == Want {
+		return
 	}
 
-	var other_tests *Tests[mock_args]
+	common.FAIL.WrongInt(t, int(Want), int(test_count))
+}
 
-	err := other_tests.AddTest("test", mock_args{})
-	if err == nil {
-		t.Errorf("want error, got nil")
-	} else if err != common.ErrNilReceiver {
-		t.Errorf("want ErrNilReceiver, got %v", err)
+// TestNewTestsFail tests the NewTests function when it fails.
+func TestNewTestsFail(t *testing.T) {
+	type mock_args struct {
 	}
+
+	var tests *Tests[mock_args]
+
+	err := tests.AddTest("test", mock_args{})
+	if err == common.ErrNilReceiver {
+		return
+	}
+
+	common.FAIL.WrongError(t, common.ErrNilReceiver.Error(), err)
 }
