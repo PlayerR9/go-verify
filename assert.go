@@ -68,7 +68,7 @@ func Err(inner error, format string, args ...any) {
 	panic(NewErrAssertFailed(msg))
 }
 
-// Must asserts whether the function does not return an error for the given argument.
+// MustCall asserts whether the function does not return an error for the given argument.
 // If the function returns an error, it panics with an ErrAssertFailed error.
 //
 // Parameters:
@@ -76,7 +76,7 @@ func Err(inner error, format string, args ...any) {
 //   - fn: The function to execute.
 //   - format: The format of the function call that returned the error.
 //   - args: The arguments of the function call.
-func Must[T any](arg T, fn func(arg T) error, format string, args ...any) {
+func MustCall[T any](arg T, fn func(arg T) error, format string, args ...any) {
 	if fn == nil {
 		panic(NewErrAssertFailed("no function provided"))
 	}
@@ -90,6 +90,27 @@ func Must[T any](arg T, fn func(arg T) error, format string, args ...any) {
 	msg += " = " + err.Error()
 
 	panic(NewErrAssertFailed(msg))
+}
+
+// Must is a helper function that wraps a call to a function that returns (T, error) and
+// panics if the error is not nil.
+//
+// This function is intended to be used to handle errors in a way that is easy to read and write.
+//
+// Parameters:
+//   - res: The result of the function.
+//   - err: The error returned by the function.
+//
+// Returns:
+//   - T: The result of the function.
+func Must[T comparable](res T, err error) T {
+	if err != nil {
+		panic(NewErrAssertFailed("err = " + err.Error()))
+	} else if res == *new(T) {
+		panic(NewErrAssertFailed("res = nil"))
+	}
+
+	return res
 }
 
 // True is just syntactic sugar for the Condf function but used for when functions
