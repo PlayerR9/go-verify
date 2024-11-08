@@ -22,14 +22,14 @@ func TODO(msg string) {
 	}
 }
 
-// Warn prints a warning message to the console.
+// WARN prints a warning message to the console.
 // The message is prefixed with "[WARNING]:" to indicate its nature.
 //
 // Parameters:
 //   - msg: The warning message to be displayed.
 //
 // Panics if there is an error writing to the standard output.
-func Warn(msg string) {
+func WARN(msg string) {
 	data := []byte("[WARNING]: " + msg + "\n")
 
 	n, err := os.Stdout.Write(data)
