@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/PlayerR9/go-verify/common"
+	"github.com/PlayerR9/go-verify/OLD/common"
 )
 
 type Benchmark struct {

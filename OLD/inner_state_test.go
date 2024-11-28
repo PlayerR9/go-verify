@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/PlayerR9/go-verify/common"
-	"github.com/PlayerR9/go-verify/test"
+	"github.com/PlayerR9/go-verify/OLD/common"
+	"github.com/PlayerR9/go-verify/OLD/test"
 )
 
 // MockStruct is a mock struct.

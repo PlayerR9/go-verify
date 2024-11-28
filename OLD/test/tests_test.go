@@ -3,7 +3,7 @@ package test
 import (
 	"testing"
 
-	"github.com/PlayerR9/go-verify/common"
+	"github.com/PlayerR9/go-verify/OLD/common"
 )
 
 // TestNewTestsSuccess tests the NewTests function when it succeeds.

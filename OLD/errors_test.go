@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/PlayerR9/go-verify/common"
-	test "github.com/PlayerR9/go-verify/test"
+	"github.com/PlayerR9/go-verify/OLD/common"
+	test "github.com/PlayerR9/go-verify/OLD/test"
 )
 
 /*

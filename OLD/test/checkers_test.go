@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/PlayerR9/go-verify/common"
+	"github.com/PlayerR9/go-verify/OLD/common"
 )
 
 // TestTry tests the Try function and its helper function.
