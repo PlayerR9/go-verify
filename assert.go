@@ -66,6 +66,31 @@ func Err(inner error, format string, args ...any) {
 	panic(err)
 }
 
+// Ok checks whether a boolean condition is true. If not, it panics with ErrAssertFail
+// using the given format string and arguments. If the format string is empty,
+// "func() = false" is used as the error message.
+//
+// Parameters:
+//   - ok: The boolean condition to check.
+//   - format: The format string for the error message if the condition is false.
+//   - args: The arguments to use with the format string.
+//
+// Panics:
+//   - ErrAssertFail: If the condition is false.
+func Ok(ok bool, format string, args ...any) {
+	if ok {
+		return
+	}
+
+	msg := fmt.Sprintf(format, args...)
+	if msg == "" {
+		msg = "func()"
+	}
+
+	err := NewErrAssertFail(msg + " = false")
+	panic(err)
+}
+
 /* func X(inner error, name string) {
 	if inner == nil {
 		return
