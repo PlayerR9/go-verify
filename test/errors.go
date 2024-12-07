@@ -3,7 +3,6 @@ package test
 import (
 	"errors"
 	"fmt"
-	"strconv"
 )
 
 var (
@@ -69,164 +68,32 @@ func NewErrTest(want, got string) error {
 	}
 }
 
-// failT is for private use only
-type failT struct{}
-
-var (
-	// FAIL is the namespace for creating ErrTest errors.
-	FAIL failT
-)
-
-func init() {
-	FAIL = failT{}
+// ErrPanic is an error that represents a panic.
+type ErrPanic struct {
+	// Value is the value of the panic.
+	Value any
 }
 
-// String creates and returns a new ErrTest error with the given expected and
-// actual string values. The string values are quoted.
+// Error implements the error interface.
+func (e ErrPanic) Error() string {
+	return fmt.Sprintf("panic: %v", e.Value)
+}
+
+// NewErrPanic creates a new error that represents a panic.
 //
 // Parameters:
-//   - want: The expected string value.
-//   - got: The actual string value.
+//   - value: The value of the panic.
 //
 // Returns:
-//   - error: A pointer to the newly created ErrTest. Never returns nil.
+//   - error: The new error. Never returns nil.
 //
 // Format:
 //
-//	"want <want>, got <got>"
+//	"panic: <value>"
 //
-// Where:
-//   - <want> is the expected quoted string value.
-//   - <got> is the actual quoted string value.
-func (failT) String(want, got string) error {
-	return &ErrTest{
-		Want: strconv.Quote(want),
-		Got:  strconv.Quote(got),
-	}
-}
-
-// Int creates and returns a new ErrTest error with the given expected and
-// actual integer values.
-//
-// Parameters:
-//   - want: The expected integer value.
-//   - got: The actual integer value.
-//
-// Returns:
-//   - error: A pointer to the newly created ErrTest. Never returns nil.
-//
-// Format:
-//
-//	"want <want>, got <got>"
-//
-// Where:
-//   - <want> is the expected integer value.
-//   - <got> is the actual integer value.
-func (failT) Int(want, got int) error {
-	return &ErrTest{
-		Want: strconv.Itoa(want),
-		Got:  strconv.Itoa(got),
-	}
-}
-
-// Uint creates and returns a new ErrTest error with the given expected and
-// actual integer values.
-//
-// Parameters:
-//   - want: The expected integer value.
-//   - got: The actual integer value.
-//
-// Returns:
-//   - error: A pointer to the newly created ErrTest. Never returns nil.
-//
-// Format:
-//
-//	"want <want>, got <got>"
-//
-// Where:
-//   - <want> is the expected unsigned integer value.
-//   - <got> is the actual unsigned integer value.
-func (failT) Uint(want, got uint) error {
-	return &ErrTest{
-		Want: strconv.FormatUint(uint64(want), 10),
-		Got:  strconv.FormatUint(uint64(got), 10),
-	}
-}
-
-// Err creates and returns a new ErrTest error with the given expected and
-// actual values. Error messages are quoted.
-//
-// Parameters:
-//   - want: The expected error.
-//   - got: The actual error.
-//
-// Returns:
-//   - error: A pointer to the newly created ErrTest. Never returns nil.
-//
-// Format:
-//
-//	"want <want>, got <got>"
-//
-// Where:
-//   - <want> is the expected error message if want is not nil, "no error"
-//     otherwise.
-//   - <got> is the actual error message if got is not nil, "no error"
-//     otherwise.
-func (failT) Err(want, got error) error {
-	var want_str, got_str string
-
-	if want == nil {
-		want_str = "no error"
-	} else {
-		want_str = strconv.Quote(want.Error())
-	}
-
-	if got == nil {
-		got_str = "no error"
-	} else {
-		got_str = strconv.Quote(got.Error())
-	}
-
-	return &ErrTest{
-		Want: want_str,
-		Got:  got_str,
-	}
-}
-
-// Any creates and returns a new ErrTest error with the given expected and
-// actual values.
-//
-// Parameters:
-//   - want: The expected value.
-//   - got: The actual value.
-//
-// Returns:
-//   - error: A pointer to the newly created ErrTest. Never returns nil.
-//
-// Format:
-//
-//	"want <want>, got <got>"
-//
-// Where:
-//   - <want> is the expected value if want is not nil, "nothing" otherwise.
-//   - <got> is the actual value if got is not nil, "nothing" otherwise.
-func (failT) Any(want, got any) error {
-	var want_str, got_str string
-
-	if want == nil {
-		want_str = "nothing"
-	} else {
-		want_str = fmt.Sprint(want)
-	}
-
-	if got == nil {
-		got_str = "nothing"
-	} else {
-		got_str = fmt.Sprint(got)
-	}
-
-	return &ErrTest{
-		Want: want_str,
-		Got:  got_str,
+// where <value> is the value of the panic.
+func NewErrPanic(value any) error {
+	return &ErrPanic{
+		Value: value,
 	}
 }

@@ -1,7 +1,5 @@
 package assert
 
-import "fmt"
-
 // ErrAssertFailed is an error that is returned when an assertion fails.
 type ErrAssertFailed struct {
 	// Msg describes what went wrong.
@@ -141,35 +139,5 @@ func NewErrFixFailed(name string, reason error) error {
 	return &ErrFixFailed{
 		Name:   name,
 		Reason: reason,
-	}
-}
-
-// ErrPanic is an error that represents a panic.
-type ErrPanic struct {
-	// Value is the value of the panic.
-	Value any
-}
-
-// Error implements the error interface.
-func (e ErrPanic) Error() string {
-	return fmt.Sprintf("panic: %v", e.Value)
-}
-
-// NewErrPanic creates a new error that represents a panic.
-//
-// Parameters:
-//   - value: The value of the panic.
-//
-// Returns:
-//   - error: The new error. Never returns nil.
-//
-// Format:
-//
-//	"panic: <value>"
-//
-// where <value> is the value of the panic.
-func NewErrPanic(value any) error {
-	return &ErrPanic{
-		Value: value,
 	}
 }

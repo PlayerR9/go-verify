@@ -1,8 +1,6 @@
-package assert
+package test
 
-import (
-	"errors"
-)
+import "errors"
 
 // try executes the given function and stores any paniced error in err.
 //
