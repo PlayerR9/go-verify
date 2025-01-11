@@ -128,8 +128,8 @@ func False(ok bool, format string, args ...any) {
 //	v := 0
 //
 //	NotZero[int](v, "v") // Panics: v is zero
-func NotZero[T comparable](v T, name string) {
-	if v != *new(T) {
+func NotZero[E comparable](v E, name string) {
+	if v != *new(E) {
 		return
 	}
 
@@ -141,7 +141,7 @@ func NotZero[T comparable](v T, name string) {
 	panic(err)
 }
 
-// Type asserts whether the variable is of type T. If not, it panics with an
+// Type asserts whether the variable is of type E. If not, it panics with an
 // ErrAssertFailed error.
 //
 // Parameters:
@@ -153,7 +153,7 @@ func NotZero[T comparable](v T, name string) {
 //
 //	v := "foo"
 //	Type[int](v, "v", false) // Panics: v = string, want int
-func Type[T any](v any, name string, allow_nil bool) {
+func Type[E any](v any, name string, allow_nil bool) {
 	if name == "" {
 		name = "variable"
 	}
@@ -164,14 +164,16 @@ func Type[T any](v any, name string, allow_nil bool) {
 		return
 	}
 
-	_, ok := v.(T)
-	if !ok {
-		msg := fmt.Sprintf("%s = %T, want %T", name, v, *new(T))
-		panic(NewErrAssertFail(msg))
+	_, ok := v.(E)
+	if ok {
+		return
 	}
+
+	msg := fmt.Sprintf("%s = %T, want %T", name, v, *new(E))
+	panic(NewErrAssertFail(msg))
 }
 
-// Deref asserts whether the variable is both non-nil and is of type T. If
+// Deref asserts whether the variable is both non-nil and is of type E. If
 // not, it panics with an ErrAssertFailed error.
 //
 // Parameters:
@@ -179,34 +181,26 @@ func Type[T any](v any, name string, allow_nil bool) {
 //   - name: The name of the variable. If empty, the name "variable" is used.
 //
 // Returns:
-//   - T: The dereferenced variable.
+//   - E: The dereferenced variable.
 //
 // Example:
 //
 //	var v *int
 //	_ = Deref[string](v, "v") // Panics: v = *int, want string
-func Deref[T any](v any, name string) T {
+func Deref[E any](v *E, name string) E {
 	if name == "" {
 		name = "variable"
 	}
 
 	if v == nil {
-		msg := fmt.Sprintf("%s = nil, want %T", name, *new(T))
+		msg := fmt.Sprintf("%s = nil, want %T", name, *new(E))
 		panic(NewErrAssertFail(msg))
 	}
 
-	switch v := v.(type) {
-	case *T:
-		return *v
-	case T:
-		return v
-	default:
-		msg := fmt.Sprintf("%s = %T, want %T", name, v, *new(T))
-		panic(NewErrAssertFail(msg))
-	}
+	return *v
 }
 
-// Conv asserts whether the variable is of type T. If not, it panics with an
+// Conv asserts whether the variable is of type E. If not, it panics with an
 // ErrAssertFailed error. Unlike with Type(), this returns the converted
 // type as well.
 //
@@ -218,7 +212,7 @@ func Deref[T any](v any, name string) T {
 //
 //	v := "foo"
 //	res := Conv[int](v, "v") // Panics: v = string, want int
-func Conv[T any](v any, name string) T {
+func Conv[E any](v any, name string) E {
 	if name == "" {
 		name = "variable"
 	}
@@ -227,11 +221,33 @@ func Conv[T any](v any, name string) T {
 		panic(NewErrAssertFail(name + " = nil"))
 	}
 
-	val, ok := v.(T)
+	val, ok := v.(E)
 	if !ok {
-		msg := fmt.Sprintf("%s = %T, want %T", name, v, *new(T))
+		msg := fmt.Sprintf("%s = %T, want %T", name, v, *new(E))
 		panic(NewErrAssertFail(msg))
 	}
 
 	return val
+}
+
+// NotNil asserts whether the variable is not nil. If it is nil, it panics
+// with an ErrAssertFail error.
+//
+// Parameters:
+//   - v: The pointer to the variable to assert.
+//   - name: The name of the variable. If empty, "variable" is used.
+//
+// Panics:
+//   - ErrAssertFail: If the variable is nil.
+//
+// Example:
+//
+//	var v *int
+//	NotNil[int](v, "v") // Panics: v = nil
+func NotNil[E any](v *E, name string) {
+	if v != nil {
+		return
+	}
+
+	panic(NewErrAssertFail(name + " = nil"))
 }

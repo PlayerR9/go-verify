@@ -284,7 +284,7 @@ func TestType(t *testing.T) {
 // TestDeref tests the Deref function.
 func TestDeref(t *testing.T) {
 	type args struct {
-		v    any
+		v    *int
 		name string
 		want string
 	}
@@ -298,18 +298,6 @@ func TestDeref(t *testing.T) {
 			err := test.FAIL.ErrorMessage(caught, args.want)
 			return err
 		}
-	})
-
-	_ = tests.Add("v is int", args{
-		v:    1,
-		name: "v",
-		want: "",
-	})
-
-	_ = tests.Add("v is string", args{
-		v:    "foo",
-		name: "v",
-		want: NewErrAssertFail("v = string, want int").Error(),
 	})
 
 	_ = tests.Add("v without name", args{
