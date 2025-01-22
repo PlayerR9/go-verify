@@ -6,25 +6,22 @@ import (
 )
 
 var (
-	// ErrNilReceiver occurs when a method is called on a receiver that is nil. This
-	// error can be checked with the == operator.
+	// ErrNilReceiver occurs when a method is called on a receiver that is nil.
+	//
+	// This error can be checked with the == operator.
 	//
 	// Format:
 	// 	"receiver must not be nil"
-	ErrNilReceiver error
+	ErrNilReceiver error = errors.New("receiver must not be nil")
 
-	// ErrTestNotImpl occurs when a test is not implemented. This can be checked
-	// with the == operator.
+	// ErrTestNotImpl occurs when a test is not implemented.
+	//
+	// // This error can be checked with the == operator.
 	//
 	// Format:
 	// 	"test not implemented"
-	ErrTestNotImpl error
+	ErrTestNotImpl error = errors.New("test not implemented")
 )
-
-func init() {
-	ErrTestNotImpl = errors.New("test not implemented")
-	ErrNilReceiver = errors.New("receiver must not be nil")
-}
 
 // ErrTest occurs when a test failed.
 type ErrTest struct {
@@ -62,10 +59,12 @@ func (e ErrTest) Error() string {
 //   - <want> is the expected value.
 //   - <got> is the actual value.
 func NewErrTest(want, got string) error {
-	return &ErrTest{
+	err := &ErrTest{
 		Want: want,
 		Got:  got,
 	}
+
+	return err
 }
 
 // ErrPanic is an error that represents a panic.
@@ -93,7 +92,9 @@ func (e ErrPanic) Error() string {
 //
 // where <value> is the value of the panic.
 func NewErrPanic(value any) error {
-	return &ErrPanic{
+	err := &ErrPanic{
 		Value: value,
 	}
+
+	return err
 }

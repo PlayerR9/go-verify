@@ -13,7 +13,7 @@ type TestSet[T any] struct {
 	instances []Instance
 }
 
-// NewTestSet creates and returns a new Tests instance with a specified
+// NewTestSet creates and returns a new TestSet instance with a specified
 // function to create TestingFn instances. If no function is provided,
 // a default testing function is used.
 //
@@ -22,7 +22,7 @@ type TestSet[T any] struct {
 //     testing function is used.
 //
 // Returns:
-//   - Tests: A new Tests instance with the provided or default makeFn.
+//   - TestSet[T]: A new Tests instance with the provided or default makeFn.
 func NewTestSet[T any](makeFn MakeFn[T]) TestSet[T] {
 	if makeFn == nil {
 		makeFn = func(_ T) TestingFn {
@@ -30,9 +30,11 @@ func NewTestSet[T any](makeFn MakeFn[T]) TestSet[T] {
 		}
 	}
 
-	return TestSet[T]{
+	ts := TestSet[T]{
 		makeFn: makeFn,
 	}
+
+	return ts
 }
 
 // Add adds a new test to the collection of tests.

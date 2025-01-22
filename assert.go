@@ -159,7 +159,8 @@ func Type[E any](v any, name string, allow_nil bool) {
 	}
 
 	if v == nil && !allow_nil {
-		panic(NewErrAssertFail(name + " = nil"))
+		err := NewErrAssertFail(name + " = nil")
+		panic(err)
 	} else if v == nil {
 		return
 	}
@@ -170,7 +171,9 @@ func Type[E any](v any, name string, allow_nil bool) {
 	}
 
 	msg := fmt.Sprintf("%s = %T, want %T", name, v, *new(E))
-	panic(NewErrAssertFail(msg))
+
+	err := NewErrAssertFail(msg)
+	panic(err)
 }
 
 // Deref asserts whether the variable is both non-nil and is of type E. If
@@ -192,12 +195,14 @@ func Deref[E any](v *E, name string) E {
 		name = "variable"
 	}
 
-	if v == nil {
-		msg := fmt.Sprintf("%s = nil, want %T", name, *new(E))
-		panic(NewErrAssertFail(msg))
+	if v != nil {
+		return *v
 	}
 
-	return *v
+	msg := fmt.Sprintf("%s = nil, want %T", name, *new(E))
+
+	err := NewErrAssertFail(msg)
+	panic(err)
 }
 
 // Conv asserts whether the variable is of type E. If not, it panics with an
@@ -218,16 +223,19 @@ func Conv[E any](v any, name string) E {
 	}
 
 	if v == nil {
-		panic(NewErrAssertFail(name + " = nil"))
+		err := NewErrAssertFail(name + " = nil")
+		panic(err)
 	}
 
 	val, ok := v.(E)
-	if !ok {
-		msg := fmt.Sprintf("%s = %T, want %T", name, v, *new(E))
-		panic(NewErrAssertFail(msg))
+	if ok {
+		return val
 	}
 
-	return val
+	msg := fmt.Sprintf("%s = %T, want %T", name, v, *new(E))
+
+	err := NewErrAssertFail(msg)
+	panic(err)
 }
 
 // NotNil asserts whether the variable is not nil. If it is nil, it panics
@@ -249,5 +257,6 @@ func NotNil[E any](v *E, name string) {
 		return
 	}
 
-	panic(NewErrAssertFail(name + " = nil"))
+	err := NewErrAssertFail(name + " = nil")
+	panic(err)
 }

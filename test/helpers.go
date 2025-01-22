@@ -10,14 +10,10 @@ var (
 	// DefaultTestingFn is the default function for when no testing function is provided.
 	//
 	// It just returns ErrTestNotImpl.
-	DefaultTestingFn TestingFn
-)
-
-func init() {
-	DefaultTestingFn = func() error {
+	DefaultTestingFn TestingFn = func() error {
 		return ErrTestNotImpl
 	}
-}
+)
 
 // MakeFn is a function that is used to create TestingFn instances.
 //

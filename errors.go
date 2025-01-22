@@ -36,7 +36,9 @@ func (e ErrAssertFail) Error() string {
 //   - <msg> is the error message. If empty, defaults to "an assertion was not
 //     met".
 func NewErrAssertFail(msg string) error {
-	return &ErrAssertFail{
+	err := &ErrAssertFail{
 		Msg: msg,
 	}
+
+	return err
 }

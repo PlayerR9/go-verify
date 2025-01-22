@@ -12,14 +12,18 @@ func TestTry(t *testing.T) {
 		want string
 	}
 
-	tests := NewTestSet(func(args args) TestingFn {
-		return func() error {
+	fn := func(args args) TestingFn {
+		fn := func() error {
 			caught := Try(args.fn)
 
-			err := FAIL.ErrorMessage(caught, args.want)
+			err := CHECK.ErrorMessage(args.want, caught)
 			return err
 		}
-	})
+
+		return fn
+	}
+
+	tests := NewTestSet(fn)
 
 	_ = tests.Add("fn does not panic", args{
 		fn:   func() {},

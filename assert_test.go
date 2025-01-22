@@ -16,16 +16,22 @@ func TestCond(t *testing.T) {
 		want string
 	}
 
-	tests := test.NewTestSet(func(args args) test.TestingFn {
-		return func() error {
-			caught := test.Try(func() {
-				Cond(args.cond, args.msg)
-			})
+	fn := func(args args) test.TestingFn {
+		panicFn := func() {
+			Cond(args.cond, args.msg)
+		}
 
-			err := test.FAIL.ErrorMessage(caught, args.want)
+		fn := func() error {
+			caught := test.Try(panicFn)
+
+			err := test.CHECK.ErrorMessage(args.want, caught)
 			return err
 		}
-	})
+
+		return fn
+	}
+
+	tests := test.NewTestSet(fn)
 
 	_ = tests.Add("cond is true", args{
 		cond: true,
@@ -51,16 +57,22 @@ func TestCondf(t *testing.T) {
 		want   string
 	}
 
-	tests := test.NewTestSet(func(args args) test.TestingFn {
-		return func() error {
-			caught := test.Try(func() {
-				Condf(args.cond, args.format, args.args...)
-			})
+	fn := func(args args) test.TestingFn {
+		panicFn := func() {
+			Condf(args.cond, args.format, args.args...)
+		}
 
-			err := test.FAIL.ErrorMessage(caught, args.want)
+		fn := func() error {
+			caught := test.Try(panicFn)
+
+			err := test.CHECK.ErrorMessage(args.want, caught)
 			return err
 		}
-	})
+
+		return fn
+	}
+
+	tests := test.NewTestSet(fn)
 
 	_ = tests.Add("cond is true", args{
 		cond:   true,
@@ -88,16 +100,22 @@ func TestErr(t *testing.T) {
 		want   string
 	}
 
-	tests := test.NewTestSet(func(args args) test.TestingFn {
-		return func() error {
-			caught := test.Try(func() {
-				Err(args.inner, args.format, args.args...)
-			})
+	fn := func(args args) test.TestingFn {
+		panicFn := func() {
+			Err(args.inner, args.format, args.args...)
+		}
 
-			err := test.FAIL.ErrorMessage(caught, args.want)
+		fn := func() error {
+			caught := test.Try(panicFn)
+
+			err := test.CHECK.ErrorMessage(args.want, caught)
 			return err
 		}
-	})
+
+		return fn
+	}
+
+	tests := test.NewTestSet(fn)
 
 	_ = tests.Add("inner is nil", args{
 		inner:  nil,
@@ -125,16 +143,22 @@ func TestTrue(t *testing.T) {
 		want   string
 	}
 
-	tests := test.NewTestSet(func(args args) test.TestingFn {
-		return func() error {
-			caught := test.Try(func() {
-				True(args.ok, args.format, args.args...)
-			})
+	fn := func(args args) test.TestingFn {
+		panicFn := func() {
+			True(args.ok, args.format, args.args...)
+		}
 
-			err := test.FAIL.ErrorMessage(caught, args.want)
+		fn := func() error {
+			caught := test.Try(panicFn)
+
+			err := test.CHECK.ErrorMessage(args.want, caught)
 			return err
 		}
-	})
+
+		return fn
+	}
+
+	tests := test.NewTestSet(fn)
 
 	_ = tests.Add("ok is true", args{
 		ok:     true,
@@ -162,16 +186,22 @@ func TestFalse(t *testing.T) {
 		want   string
 	}
 
-	tests := test.NewTestSet(func(args args) test.TestingFn {
-		return func() error {
-			caught := test.Try(func() {
-				False(args.ok, args.format, args.args...)
-			})
+	fn := func(args args) test.TestingFn {
+		panicFn := func() {
+			False(args.ok, args.format, args.args...)
+		}
 
-			err := test.FAIL.ErrorMessage(caught, args.want)
+		fn := func() error {
+			caught := test.Try(panicFn)
+
+			err := test.CHECK.ErrorMessage(args.want, caught)
 			return err
 		}
-	})
+
+		return fn
+	}
+
+	tests := test.NewTestSet(fn)
 
 	_ = tests.Add("ok is false", args{
 		ok:     false,
@@ -198,16 +228,22 @@ func TestNotZero(t *testing.T) {
 		want string
 	}
 
-	tests := test.NewTestSet(func(args args) test.TestingFn {
-		return func() error {
-			caught := test.Try(func() {
-				NotZero(args.v, args.name)
-			})
+	fn := func(args args) test.TestingFn {
+		panicFn := func() {
+			NotZero(args.v, args.name)
+		}
 
-			err := test.FAIL.ErrorMessage(caught, args.want)
+		fn := func() error {
+			caught := test.Try(panicFn)
+
+			err := test.CHECK.ErrorMessage(args.want, caught)
 			return err
 		}
-	})
+
+		return fn
+	}
+
+	tests := test.NewTestSet(fn)
 
 	_ = tests.Add("v is not zero", args{
 		v:    1,
@@ -239,16 +275,22 @@ func TestType(t *testing.T) {
 		want      string
 	}
 
-	tests := test.NewTestSet(func(args args) test.TestingFn {
-		return func() error {
-			caught := test.Try(func() {
-				Type[int](args.v, args.name, args.allow_nil)
-			})
+	fn := func(args args) test.TestingFn {
+		panicFn := func() {
+			Type[int](args.v, args.name, args.allow_nil)
+		}
 
-			err := test.FAIL.ErrorMessage(caught, args.want)
+		fn := func() error {
+			caught := test.Try(panicFn)
+
+			err := test.CHECK.ErrorMessage(args.want, caught)
 			return err
 		}
-	})
+
+		return fn
+	}
+
+	tests := test.NewTestSet(fn)
 
 	_ = tests.Add("v is int", args{
 		v:         1,
@@ -289,16 +331,22 @@ func TestDeref(t *testing.T) {
 		want string
 	}
 
-	tests := test.NewTestSet(func(args args) test.TestingFn {
-		return func() error {
-			caught := test.Try(func() {
-				_ = Deref[int](args.v, args.name)
-			})
+	fn := func(args args) test.TestingFn {
+		panicFn := func() {
+			_ = Deref(args.v, args.name)
+		}
 
-			err := test.FAIL.ErrorMessage(caught, args.want)
+		fn := func() error {
+			caught := test.Try(panicFn)
+
+			err := test.CHECK.ErrorMessage(args.want, caught)
 			return err
 		}
-	})
+
+		return fn
+	}
+
+	tests := test.NewTestSet(fn)
 
 	_ = tests.Add("v without name", args{
 		v:    nil,
