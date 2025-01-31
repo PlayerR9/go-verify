@@ -3,6 +3,7 @@ package test
 import (
 	"errors"
 	"fmt"
+	"strings"
 )
 
 var (
@@ -25,6 +26,9 @@ var (
 
 // ErrTest occurs when a test failed.
 type ErrTest struct {
+	// Kind is the kind of the value.
+	Kind string
+
 	// Want is the expected value.
 	Want string
 
@@ -34,7 +38,35 @@ type ErrTest struct {
 
 // Error implements error.
 func (e ErrTest) Error() string {
-	return "want " + e.Want + ", got " + e.Got
+	var want, got string
+
+	if e.Want == "" {
+		want = "something"
+	} else {
+		want = e.Want
+	}
+
+	if e.Got == "" {
+		got = "nothing"
+	} else {
+		got = e.Got
+	}
+
+	if e.Kind == "" {
+		return "want " + want + ", got " + got
+	}
+
+	var builder strings.Builder
+
+	_, _ = builder.WriteString("want ")
+	_, _ = builder.WriteString(e.Kind)
+	_, _ = builder.WriteString(" to be ")
+	_, _ = builder.WriteString(want)
+	_, _ = builder.WriteString(", got ")
+	_, _ = builder.WriteString(got)
+
+	str := builder.String()
+	return str
 }
 
 // NewErrTest creates and returns a new ErrTest error with the given expected
@@ -53,13 +85,17 @@ func (e ErrTest) Error() string {
 //
 // Format:
 //
-//	"want <want>, got <got>"
+//	"want <kind> to be <want>, got <got>"
 //
 // Where:
+//   - <kind> is the kind of the value.
 //   - <want> is the expected value.
 //   - <got> is the actual value.
-func NewErrTest(want, got string) error {
+//
+// If the kind is empty, "want <want>, got <got>" is used.
+func NewErrTest(kind, want, got string) error {
 	err := &ErrTest{
+		Kind: kind,
 		Want: want,
 		Got:  got,
 	}

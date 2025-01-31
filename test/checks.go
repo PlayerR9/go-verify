@@ -16,17 +16,18 @@ var (
 // the proper error is returned.
 //
 // Parameters:
+//   - kind: The kind of the value.
 //   - want: The expected string value.
 //   - got: The actual string value.
 //
 // Returns:
 //   - error: A pointer to the newly created ErrTest, if the check fails.
-func (checkT) String(want, got string) error {
+func (checkT) String(kind, want, got string) error {
 	if want == got {
 		return nil
 	}
 
-	err := FAIL.String(want, got)
+	err := FAIL.String(kind, want, got)
 	return err
 }
 
@@ -34,17 +35,18 @@ func (checkT) String(want, got string) error {
 // the proper error is returned.
 //
 // Parameters:
+//   - kind: The kind of the value.
 //   - want: The expected integer value.
 //   - got: The actual integer value.
 //
 // Returns:
 //   - error: A pointer to the newly created ErrTest, if the check fails.
-func (checkT) Int(want, got int) error {
+func (checkT) Int(kind string, want, got int) error {
 	if want == got {
 		return nil
 	}
 
-	err := FAIL.Int(want, got)
+	err := FAIL.Int(kind, want, got)
 	return err
 }
 
@@ -52,17 +54,18 @@ func (checkT) Int(want, got int) error {
 // equal. If not the proper error is returned.
 //
 // Parameters:
+//   - kind: The kind of the value.
 //   - want: The expected unsigned integer value.
 //   - got: The actual unsigned integer value.
 //
 // Returns:
 //   - error: A pointer to the newly created ErrTest, if the check fails.
-func (checkT) Uint(want, got uint) error {
+func (checkT) Uint(kind string, want, got uint) error {
 	if want == got {
 		return nil
 	}
 
-	err := FAIL.Uint(want, got)
+	err := FAIL.Uint(kind, want, got)
 	return err
 }
 
@@ -70,12 +73,13 @@ func (checkT) Uint(want, got uint) error {
 // the proper error is returned.
 //
 // Parameters:
+//   - kind: The kind of the value.
 //   - want: The expected error value.
 //   - got: The actual error value.
 //
 // Returns:
 //   - error: A pointer to the newly created ErrTest, if the check fails.
-func (checkT) Err(want, got error) error {
+func (checkT) Err(kind string, want, got error) error {
 	if want == got {
 		return nil
 	}
@@ -85,7 +89,7 @@ func (checkT) Err(want, got error) error {
 		return nil
 	}
 
-	err := FAIL.Err(want, got)
+	err := FAIL.Err(kind, want, got)
 	return err
 }
 
@@ -93,12 +97,13 @@ func (checkT) Err(want, got error) error {
 // equal. If not the proper error is returned.
 //
 // Parameters:
+//   - kind: The kind of the value.
 //   - want: The expected error message.
 //   - got: The actual error message.
 //
 // Returns:
 //   - error: A pointer to the newly created ErrTest, if the check fails.
-func (checkT) ErrorMessage(want string, got error) error {
+func (checkT) ErrorMessage(kind, want string, got error) error {
 	if want == "" && got == nil {
 		return nil
 	}
@@ -110,7 +115,7 @@ func (checkT) ErrorMessage(want string, got error) error {
 		}
 	}
 
-	err := FAIL.ErrorMessage(want, got)
+	err := FAIL.ErrorMessage(kind, want, got)
 	return err
 }
 
@@ -118,16 +123,17 @@ func (checkT) ErrorMessage(want string, got error) error {
 // the proper error is returned.
 //
 // Parameters:
+//   - kind: The kind of the value.
 //   - want: The expected rune value.
 //   - got: The actual rune value.
 //
 // Returns:
 //   - error: A pointer to the newly created ErrTest, if the check fails.
-func (checkT) Rune(want, got rune) error {
+func (checkT) Rune(kind string, want, got rune) error {
 	if want == got {
 		return nil
 	}
 
-	err := FAIL.Rune(want, got)
+	err := FAIL.Rune(kind, want, got)
 	return err
 }

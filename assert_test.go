@@ -24,7 +24,7 @@ func TestCond(t *testing.T) {
 		fn := func() error {
 			caught := test.Try(panicFn)
 
-			err := test.CHECK.ErrorMessage(args.want, caught)
+			err := test.CHECK.ErrorMessage("", args.want, caught)
 			return err
 		}
 
@@ -65,7 +65,7 @@ func TestCondf(t *testing.T) {
 		fn := func() error {
 			caught := test.Try(panicFn)
 
-			err := test.CHECK.ErrorMessage(args.want, caught)
+			err := test.CHECK.ErrorMessage("", args.want, caught)
 			return err
 		}
 
@@ -108,7 +108,7 @@ func TestErr(t *testing.T) {
 		fn := func() error {
 			caught := test.Try(panicFn)
 
-			err := test.CHECK.ErrorMessage(args.want, caught)
+			err := test.CHECK.ErrorMessage("", args.want, caught)
 			return err
 		}
 
@@ -151,7 +151,7 @@ func TestTrue(t *testing.T) {
 		fn := func() error {
 			caught := test.Try(panicFn)
 
-			err := test.CHECK.ErrorMessage(args.want, caught)
+			err := test.CHECK.ErrorMessage("", args.want, caught)
 			return err
 		}
 
@@ -194,7 +194,7 @@ func TestFalse(t *testing.T) {
 		fn := func() error {
 			caught := test.Try(panicFn)
 
-			err := test.CHECK.ErrorMessage(args.want, caught)
+			err := test.CHECK.ErrorMessage("", args.want, caught)
 			return err
 		}
 
@@ -236,7 +236,7 @@ func TestNotZero(t *testing.T) {
 		fn := func() error {
 			caught := test.Try(panicFn)
 
-			err := test.CHECK.ErrorMessage(args.want, caught)
+			err := test.CHECK.ErrorMessage("", args.want, caught)
 			return err
 		}
 
@@ -283,7 +283,7 @@ func TestType(t *testing.T) {
 		fn := func() error {
 			caught := test.Try(panicFn)
 
-			err := test.CHECK.ErrorMessage(args.want, caught)
+			err := test.CHECK.ErrorMessage("", args.want, caught)
 			return err
 		}
 
@@ -339,7 +339,7 @@ func TestDeref(t *testing.T) {
 		fn := func() error {
 			caught := test.Try(panicFn)
 
-			err := test.CHECK.ErrorMessage(args.want, caught)
+			err := test.CHECK.ErrorMessage("", args.want, caught)
 			return err
 		}
 

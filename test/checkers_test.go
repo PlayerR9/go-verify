@@ -16,7 +16,7 @@ func TestTry(t *testing.T) {
 		fn := func() error {
 			caught := Try(args.fn)
 
-			err := CHECK.ErrorMessage(args.want, caught)
+			err := CHECK.ErrorMessage("", args.want, caught)
 			return err
 		}
 

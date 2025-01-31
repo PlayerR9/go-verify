@@ -22,6 +22,7 @@ var (
 // actual string values. The string values are quoted.
 //
 // Parameters:
+//   - kind: The kind of the value.
 //   - want: The expected string value.
 //   - got: The actual string value.
 //
@@ -30,18 +31,27 @@ var (
 //
 // Format:
 //
-//	"want <want>, got <got>"
+//	"want <kind> to be <want>, got <got>"
 //
 // Where:
+//   - <kind> is the kind of the value.
 //   - <want> is the expected quoted string value.
 //   - <got> is the actual quoted string value.
-func (failT) String(want, got string) error {
-	want_str := strconv.Quote(want)
-	got_str := strconv.Quote(got)
+//
+// If the kind is empty, "want <want>, got <got>" is used.
+func (failT) String(kind, want, got string) error {
+	if want != "" {
+		want = strconv.Quote(want)
+	}
+
+	if got != "" {
+		got = strconv.Quote(got)
+	}
 
 	err := &ErrTest{
-		Want: want_str,
-		Got:  got_str,
+		Kind: kind,
+		Want: want,
+		Got:  got,
 	}
 
 	return err
@@ -51,6 +61,7 @@ func (failT) String(want, got string) error {
 // actual integer values.
 //
 // Parameters:
+//   - kind: The kind of the value.
 //   - want: The expected integer value.
 //   - got: The actual integer value.
 //
@@ -59,16 +70,20 @@ func (failT) String(want, got string) error {
 //
 // Format:
 //
-//	"want <want>, got <got>"
+//	"want <kind> to be <want>, got <got>"
 //
 // Where:
+//   - <kind> is the kind of the value.
 //   - <want> is the expected integer value.
 //   - <got> is the actual integer value.
-func (failT) Int(want, got int) error {
+//
+// If the kind is empty, "want <want>, got <got>" is used.
+func (failT) Int(kind string, want, got int) error {
 	want_str := strconv.Itoa(want)
 	got_str := strconv.Itoa(got)
 
 	err := &ErrTest{
+		Kind: kind,
 		Want: want_str,
 		Got:  got_str,
 	}
@@ -80,6 +95,7 @@ func (failT) Int(want, got int) error {
 // actual integer values.
 //
 // Parameters:
+//   - kind: The kind of the value.
 //   - want: The expected integer value.
 //   - got: The actual integer value.
 //
@@ -88,16 +104,20 @@ func (failT) Int(want, got int) error {
 //
 // Format:
 //
-//	"want <want>, got <got>"
+//	"want <kind> to be <want>, got <got>"
 //
 // Where:
+//   - <kind> is the kind of the value.
 //   - <want> is the expected unsigned integer value.
 //   - <got> is the actual unsigned integer value.
-func (failT) Uint(want, got uint) error {
+//
+// If the kind is empty, "want <want>, got <got>" is used.
+func (failT) Uint(kind string, want, got uint) error {
 	want_str := strconv.FormatUint(uint64(want), Base10)
 	got_str := strconv.FormatUint(uint64(got), Base10)
 
 	err := &ErrTest{
+		Kind: kind,
 		Want: want_str,
 		Got:  got_str,
 	}
@@ -109,6 +129,7 @@ func (failT) Uint(want, got uint) error {
 // actual values. Error messages are quoted.
 //
 // Parameters:
+//   - kind: The kind of the value.
 //   - want: The expected error.
 //   - got: The actual error.
 //
@@ -117,14 +138,17 @@ func (failT) Uint(want, got uint) error {
 //
 // Format:
 //
-//	"want <want>, got <got>"
+//	"want <kind> to be <want>, got <got>"
 //
 // Where:
+//   - <kind> is the kind of the value.
 //   - <want> is the expected error message if want is not nil, "no error"
 //     otherwise.
 //   - <got> is the actual error message if got is not nil, "no error"
 //     otherwise.
-func (failT) Err(want, got error) error {
+//
+// If the kind is empty, "want <want>, got <got>" is used.
+func (failT) Err(kind string, want, got error) error {
 	if want == nil && got == nil {
 		return nil
 	}
@@ -148,6 +172,7 @@ func (failT) Err(want, got error) error {
 	}
 
 	err := &ErrTest{
+		Kind: kind,
 		Want: want_str,
 		Got:  got_str,
 	}
@@ -159,6 +184,7 @@ func (failT) Err(want, got error) error {
 // actual values.
 //
 // Parameters:
+//   - kind: The kind of the value.
 //   - want: The expected value.
 //   - got: The actual value.
 //
@@ -167,27 +193,31 @@ func (failT) Err(want, got error) error {
 //
 // Format:
 //
-//	"want <want>, got <got>"
+//	"want <kind> to be <want>, got <got>"
 //
 // Where:
+//   - <kind> is the kind of the value.
 //   - <want> is the expected value if want is not nil, "nothing" otherwise.
 //   - <got> is the actual value if got is not nil, "nothing" otherwise.
-func (failT) Any(want, got any) error {
+//
+// If the kind is empty, "want <want>, got <got>" is used.
+func (failT) Any(kind string, want, got any) error {
 	var want_str, got_str string
 
 	if want == nil {
-		want_str = "nothing"
+		want_str = ""
 	} else {
 		want_str = fmt.Sprint(want)
 	}
 
 	if got == nil {
-		got_str = "nothing"
+		got_str = ""
 	} else {
 		got_str = fmt.Sprint(got)
 	}
 
 	err := &ErrTest{
+		Kind: kind,
 		Want: want_str,
 		Got:  got_str,
 	}
@@ -199,8 +229,9 @@ func (failT) Any(want, got any) error {
 // actual error messages.
 //
 // Parameters:
-//   - got: The actual error encountered.
+//   - kind: The kind of the value.
 //   - want: The expected error message.
+//   - got: The actual error encountered.
 //
 // Returns:
 //   - error: A pointer to the newly created ErrTest. Returns nil if the actual
@@ -209,13 +240,16 @@ func (failT) Any(want, got any) error {
 //
 // Format:
 //
-//	"want <want>, got <got>"
+//	"want <kind> to be <want>, got <got>"
 //
 // Where:
+//   - <kind> is the kind of the value.
 //   - <want> is the expected error message if want is not empty, "no error"
 //     otherwise.
 //   - <got> is the actual error message if got is not nil, "no error" otherwise.
-func (failT) ErrorMessage(want string, got error) error {
+//
+// If the kind is empty, "want <want>, got <got>" is used.
+func (failT) ErrorMessage(kind, want string, got error) error {
 	var want_str, got_str string
 
 	if want == "" {
@@ -232,6 +266,7 @@ func (failT) ErrorMessage(want string, got error) error {
 	}
 
 	err := &ErrTest{
+		Kind: kind,
 		Want: want_str,
 		Got:  got_str,
 	}
@@ -243,6 +278,7 @@ func (failT) ErrorMessage(want string, got error) error {
 // actual rune values.
 //
 // Parameters:
+//   - kind: The kind of the value.
 //   - want: The expected rune value.
 //   - got: The actual rune value.
 //
@@ -251,16 +287,20 @@ func (failT) ErrorMessage(want string, got error) error {
 //
 // Format:
 //
-//	"want <want>, got <got>"
+//	"want <kind> to be <want>, got <got>"
 //
 // Where:
+//   - <kind> is the kind of the value.
 //   - <want> is the expected rune value.
 //   - <got> is the actual rune value.
-func (failT) Rune(want, got rune) error {
+//
+// If the kind is empty, "want <want>, got <got>" is used.
+func (failT) Rune(kind string, want, got rune) error {
 	want_str := strconv.QuoteRune(want)
 	got_str := strconv.QuoteRune(got)
 
 	err := &ErrTest{
+		Kind: kind,
 		Want: want_str,
 		Got:  got_str,
 	}
